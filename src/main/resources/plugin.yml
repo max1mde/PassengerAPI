@@ -1,0 +1,8 @@
+name: PassengerAPI
+version: '${version}'
+main: com.maximde.passengerapi.PassengerAPI
+api-version: '1.19'
+authors: [MaximDe]
+description: A passenger management API to make compatibility possible.
+depend:
+  - packetevents
