@@ -142,11 +142,7 @@ public final class PassengerAPI extends JavaPlugin {
                         return List.of();
                     }
 
-                    /** WARNING
-                     * This method removes ALL specified passengers from an entity. Not only the passengers set by your plugin
-                     * @param targetEntity The entity on which the passengers are set
-                     * @param passengerIDs The passengers which should be removed
-                     */
+
                     @Override
                     public void removeGlobalPassengers(int targetEntity, List<Integer> passengerIDs) {
                         passengersHashmap.values().forEach(map -> {
@@ -157,21 +153,14 @@ public final class PassengerAPI extends JavaPlugin {
                         });
                         sendPassengerPacket(targetEntity);
                     }
-                    /** WARNING
-                     * This method removes ALL passengers from an entity. Not only the passengers set by your plugin
-                     * @param targetEntity The entity on which the passengers are set
-                     */
+
                     @Override
                     public void removeAllGlobalPassengers(int targetEntity) {
                         passengersHashmap.values().forEach(map -> map.remove(targetEntity));
                         sendPassengerPacket(targetEntity);
                     }
 
-                    /**
-                     * Returns all passengers set by all plugins
-                     * @param targetEntity
-                     * @return a list os passengers
-                     */
+
                     @Override
                     public List<Integer> getGlobalPassengers(int targetEntity) {
                         List<Integer> allPassengers = new ArrayList<>();
