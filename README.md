@@ -1,5 +1,5 @@
 # What is this?
-I'ts a Java API to use in your own plugins which also works as a plugin.
+This is a Java API to use in your own plugins which also works as a plugin.
 Its made for easily managing passengers of any entities on any entities for multiple plugins.
 It does not matter if you entity exists or not as long as you provide an entity ID.
 
