@@ -17,6 +17,9 @@ depend:
 ```
 to your `plugin.yml` file.
 
+Also add the plugin [Packet Events](https://www.spigotmc.org/resources/packetevents-api.80279/) to your server
+which is required by this plugin!
+
 Then you can get the passenger actions instance like that:
 
 > [!NOTE]   
