@@ -17,6 +17,9 @@ depend:
 - PassengerAPI
 ```
 
+Also add the plugin [Packet Events](https://www.spigotmc.org/resources/packetevents-api.80279/) to your server
+which is required by this plugin!
+
 # Usage
 
 ### Obtaining the PassengerActions Instance
@@ -33,7 +36,7 @@ Replace yourPluginInstance with the instance of your plugin's main class.
 
 Here are some examples of how to use the `PassengerActions` interface:
 
-```
+```java
 // Add a single passenger
 passengerActions.addPassenger(targetEntityId, passengerEntityId);
 
