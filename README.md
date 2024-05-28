@@ -15,12 +15,12 @@ This can lead to conflicts and unintended behavior.
 Gradle:
 ```gradle
 repositories {
-	mavenCentral()
-	maven { url 'https://jitpack.io' }
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-	implementation 'com.github.max1mde:PassengerAPI:1.0.0'
+    implementation 'com.github.max1mde:PassengerAPI:1.0.0'
 }
 ```
 (For maven: https://jitpack.io/#max1mde/PassengerAPI/1.0.0)
