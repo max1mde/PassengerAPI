@@ -11,6 +11,19 @@ This can lead to conflicts and unintended behavior.
 # Getting Started
 
 1. Add PassengerAPI as a compile-only dependency to your plugin.
+
+Gradle:
+```gradle
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'com.github.max1mde:PassengerAPI:1.0.0'
+}
+```
+(For maven: https://jitpack.io/#max1mde/PassengerAPI/1.0.0)
 2. Add the following line to your `plugin.yml` file:
 ```
 depend:
