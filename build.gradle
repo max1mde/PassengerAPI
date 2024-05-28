@@ -1,9 +1,12 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
 group = 'com.maximde'
 version = '1.0.0'
+
+compileJava.options.encoding = 'UTF-8'
 
 repositories {
     mavenCentral()
@@ -50,5 +53,13 @@ processResources {
     filteringCharset 'UTF-8'
     filesMatching('plugin.yml') {
         expand props
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
     }
 }
