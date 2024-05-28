@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.max1mde:PassengerAPI:1.0.0'
+    implementation 'com.github.max1mde:PassengerAPI:1.0.1'
 }
 ```
 (For maven: https://jitpack.io/#max1mde/PassengerAPI/1.0.0)
