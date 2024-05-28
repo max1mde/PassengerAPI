@@ -7,10 +7,7 @@ import com.maximde.passengerapi.utils.Metrics;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import org.bukkit.plugin.java.JavaPlugin;
 
-
-
 public final class PassengerAPI extends JavaPlugin {
-
 
     private PlayerManager playerManager;
     private ProtocolManager protocolManager;
@@ -43,7 +40,6 @@ public final class PassengerAPI extends JavaPlugin {
                     " Either the depend PassengerAPI in the plugin.yml is missing or the plugin: " + plugin.getDescription().getName() + " " +
                     "shaded the passenger API into the own jar which should never happen!");
         }
-
         return instance.passengerManager.initActions(plugin);
     }
 

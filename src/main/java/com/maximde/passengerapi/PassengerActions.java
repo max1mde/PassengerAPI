@@ -19,9 +19,6 @@ public interface PassengerActions {
     Set<Integer> getPassengers(int targetEntity);
 
 
-    // ----------------------------------
-
-
     /** WARNING
      * This method removes ALL specified passengers from an entity. Not only the passengers set by your plugin
      * @param targetEntity The entity on which the passengers are set
