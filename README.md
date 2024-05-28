@@ -4,9 +4,17 @@ It works as a plugin and provides an easy-to-use interface for adding, removing,
 regardless of whether the entity exists or not (NPC's, packet based entities...).
 
 # Why Use PassengerAPI?
-It solves compatibility issues that may arise when different plugins create entities  
-by sending packets to players and setting them as passengers.
-This can lead to conflicts and unintended behavior.
+It solves compatibility issues that may arise when different plugins create entities    
+by sending packets to players and setting them as passengers.  
+This can lead to conflicts and unintended behavior like unmounting of previous set passengers by other plugins.
+
+> [!IMPORTANT]  
+> This plugin **works out-of-the-box!**  
+> Just put it into your plugins folder and restart your server.  
+> _It should fix most entity passenger compatibility bugs with other plugins_
+>
+> BUT if you are a **developer** you can still add/access/remove passengers using this API!  
+> For example if you want to remove a passenger from an entity, without killing it, this could be usefull.
 
 # Getting Started
 
