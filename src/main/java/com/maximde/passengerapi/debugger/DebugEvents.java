@@ -8,6 +8,7 @@ import com.maximde.passengerapi.events.RemovePassengerEvent;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,7 +37,7 @@ public class DebugEvents implements Listener {
     }
 
     private void startActionBarTask() {
-        passengerAPI.getServer().getScheduler().runTaskTimer(this.passengerAPI, this::updateActionBar, 0, 50);
+        passengerAPI.getServer().getScheduler().runTaskTimer(this.passengerAPI, this::updateActionBar, 0, 20);
     }
 
     private void updateActionBar() {
@@ -46,7 +47,7 @@ public class DebugEvents implements Listener {
         StringBuilder actionBarText = new StringBuilder();
 
         actionBarText.append(ChatColor.DARK_GREEN + "Plugins Using PassengerAPI: " + ChatColor.WHITE);
-        actionBarText.append(passengerManager.getPassengersHashmap().keySet().size());
+        actionBarText.append(passengerManager.getPassengersHashmap().keySet().size() - 1);
         actionBarText.append(ChatColor.DARK_GREEN + " Total Passengers: " + ChatColor.WHITE);
         actionBarText.append(passengerManager.getTotalPassengersCount());
         actionBarText.append(ChatColor.DARK_GREEN + " Total Target Entities: " + ChatColor.WHITE);
@@ -66,6 +67,7 @@ public class DebugEvents implements Listener {
     @EventHandler
     public void onAddPassengerEvent(AddPassengerEvent event) {
         for (Player player : debugPlayers) {
+            if(player.getItemInHand().getType() == Material.AIR) continue;
             player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.YELLOW + "Debug" + ChatColor.DARK_GREEN + "] " + ChatColor.WHITE + "AddPassengerEvent: Plugin=" + event.getPluginName() +
                     ", TargetEntityID=" + event.getTargetEntityID() + ", PassengersAmount=" + event.getPassengerList().size());
         }
@@ -74,6 +76,7 @@ public class DebugEvents implements Listener {
     @EventHandler
     public void onRemovePassengerEvent(RemovePassengerEvent event) {
         for (Player player : debugPlayers) {
+            if(player.getItemInHand().getType() == Material.AIR) continue;
             player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.YELLOW + "Debug" + ChatColor.DARK_GREEN + "] " + ChatColor.WHITE + "RemovePassengerEvent: Plugin=" + event.getPluginName() +
                     ", TargetEntityID=" + event.getTargetEntityID() + ", PassengersAmount=" + event.getPassengerList().size());
         }
@@ -82,6 +85,7 @@ public class DebugEvents implements Listener {
     @EventHandler
     public void onPassengerPacketEvent(PassengerPacketEvent event) {
         for (Player player : debugPlayers) {
+            if(player.getItemInHand().getType() == Material.AIR) continue;
             player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.YELLOW + "Debug" + ChatColor.DARK_GREEN + "] " + ChatColor.LIGHT_PURPLE + "PassengerPacketEvent: TargetEntityID=" + event.getTargetEntityID() +
                     ", PassengersAmount=" + event.getPassengerList().size() + ", PacketReceiversAmount=" + event.getPacketReceivers().size());
         }

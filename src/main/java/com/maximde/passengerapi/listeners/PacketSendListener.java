@@ -6,6 +6,8 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers;
 import com.maximde.passengerapi.PassengerAPI;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 public class PacketSendListener implements PacketListener {
 
@@ -19,7 +21,8 @@ public class PacketSendListener implements PacketListener {
     public void onPacketSend(PacketSendEvent event) {
         if(event.getPacketType() == PacketType.Play.Server.SET_PASSENGERS) {
             WrapperPlayServerSetPassengers packet = new WrapperPlayServerSetPassengers(event);
-            passengerAPI.getPassengerManager().addPassengers(packet.getEntityId(), packet.getPassengers(), false);
+            passengerAPI.getPassengerManager().addPassengers(packet.getEntityId(), packet.getPassengers(), true);
+            event.setCancelled(true);
         }
         if(event.getPacketType() == PacketType.Play.Server.DESTROY_ENTITIES) {
             WrapperPlayServerDestroyEntities packet = new WrapperPlayServerDestroyEntities(event);

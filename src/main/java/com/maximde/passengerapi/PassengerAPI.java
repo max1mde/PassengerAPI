@@ -30,7 +30,7 @@ public final class PassengerAPI extends JavaPlugin {
                 .checkForUpdates(false)
                 .bStats(false);
         PacketEvents.getAPI().getEventManager().registerListener(new PacketSendListener(this),
-                PacketListenerPriority.MONITOR);
+                PacketListenerPriority.HIGHEST);
         PacketEvents.getAPI().load();
     }
 
@@ -40,7 +40,7 @@ public final class PassengerAPI extends JavaPlugin {
         PacketEvents.getAPI().init();
         playerManager = PacketEvents.getAPI().getPlayerManager();
         protocolManager = PacketEvents.getAPI().getProtocolManager();
-        passengerManager = new PassengerManager(playerManager);
+        passengerManager = new PassengerManager(playerManager, this);
         this.debugEvents = new DebugEvents(this);
         getCommand("passengerapi").setExecutor(new PassengerCommand(this));
         getCommand("passengerapi").setTabCompleter(new PassengerTabCompleter(this));

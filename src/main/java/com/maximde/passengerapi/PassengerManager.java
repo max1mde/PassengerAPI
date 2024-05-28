@@ -25,9 +25,11 @@ public class PassengerManager {
     private final Map<String, Map<Integer, Set<Integer>>> passengersHashmap = new ConcurrentHashMap<>();
     private final PlayerManager playerManager;
     private final String PLUGIN_NAME = "PassengerAPI (Internal)";
+    private final PassengerAPI passengerAPI;
 
-    public PassengerManager(PlayerManager playerManager) {
+    public PassengerManager(PlayerManager playerManager, PassengerAPI passengerAPI) {
         this.playerManager = playerManager;
+        this.passengerAPI = passengerAPI;
     }
 
     public PassengerActions initActions(JavaPlugin plugin) {
@@ -54,16 +56,18 @@ public class PassengerManager {
      * Don't even try to use it somehow in your own plugin!
      */
     public void removePassengers(int[] passengerIDs, boolean sendPackets) {
-        Set<Integer> passengerSet = Arrays.stream(passengerIDs).boxed().collect(Collectors.toSet());
-        RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(-1, passengerSet, PLUGIN_NAME);
-        Bukkit.getPluginManager().callEvent(removePassengerEvent);
-        if (removePassengerEvent.isCancelled()) return;
+        Bukkit.getScheduler().runTask(passengerAPI, bukkitTask -> {
+            Set<Integer> passengerSet = Arrays.stream(passengerIDs).boxed().collect(Collectors.toSet());
+            RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(-1, passengerSet, PLUGIN_NAME);
+            Bukkit.getPluginManager().callEvent(removePassengerEvent);
+            if (removePassengerEvent.isCancelled()) return;
 
-        passengersHashmap.keySet().forEach(key -> {
-          passengersHashmap.get(key).values().forEach(passengers -> passengers.removeAll(passengerSet));
+            passengersHashmap.keySet().forEach(key -> {
+                passengersHashmap.get(key).values().forEach(passengers -> passengers.removeAll(passengerSet));
+            });
+
+            if(sendPackets) sendPassengerPackets();
         });
-
-        if(sendPackets) sendPassengerPackets();
     }
 
     /**
@@ -71,18 +75,20 @@ public class PassengerManager {
      * Don't even try to use it somehow in your own plugin!
      */
     public void addPassengers(int targetEntity, int[] passengerIDs, boolean sendPackets) {
-        Set<Integer> passengerSet = Arrays.stream(passengerIDs)
-                .boxed()
-                .collect(Collectors.toSet());
+        Bukkit.getScheduler().runTask(passengerAPI, bukkitTask -> {
+            Set<Integer> passengerSet = Arrays.stream(passengerIDs)
+                    .boxed()
+                    .collect(Collectors.toSet());
 
-        AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, passengerSet, PLUGIN_NAME);
-        Bukkit.getPluginManager().callEvent(addPassengerEvent);
-        if (addPassengerEvent.isCancelled()) return;
-        passengersHashmap.computeIfAbsent(PLUGIN_NAME, k -> new HashMap<>())
-                .computeIfAbsent(targetEntity, k -> new HashSet<>())
-                .addAll(passengerSet);
+            AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, passengerSet, PLUGIN_NAME);
+            Bukkit.getPluginManager().callEvent(addPassengerEvent);
+            if (addPassengerEvent.isCancelled()) return;
+            passengersHashmap.computeIfAbsent(PLUGIN_NAME, k -> new HashMap<>())
+                    .computeIfAbsent(targetEntity, k -> new HashSet<>())
+                    .addAll(passengerSet);
 
-        if(sendPackets) sendPassengerPacket(targetEntity);
+            if (sendPackets) sendPassengerPacket(targetEntity);
+        });
     }
 
 
@@ -273,6 +279,6 @@ public class PassengerManager {
         PassengerPacketEvent passengerPacketEvent = new PassengerPacketEvent(targetEntity, allPassengersList, receivers);
         WrapperPlayServerSetPassengers packet = new WrapperPlayServerSetPassengers(targetEntity, allPassengersArray);
         Bukkit.getPluginManager().callEvent(passengerPacketEvent);
-        passengerPacketEvent.getPacketReceivers().forEach(player -> this.playerManager.sendPacket(player, packet));
+        passengerPacketEvent.getPacketReceivers().forEach(player -> this.playerManager.sendPacketSilently(player, packet));
     }
 }
