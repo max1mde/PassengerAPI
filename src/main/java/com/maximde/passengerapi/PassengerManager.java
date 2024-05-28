@@ -77,6 +77,22 @@ public class PassengerManager {
         }
 
         @Override
+        public void addPassengers(int targetEntity, int[] passengerIDs) {
+            Set<Integer> passengerSet = Arrays.stream(passengerIDs)
+                    .boxed()
+                    .collect(Collectors.toSet());
+
+            AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, passengerSet, pluginName);
+            if (addPassengerEvent.isCancelled()) return;
+
+            passengersHashmap.computeIfAbsent(pluginName, k -> new HashMap<>())
+                    .computeIfAbsent(targetEntity, k -> new HashSet<>())
+                    .addAll(passengerSet);
+
+            sendPassengerPacket(targetEntity);
+        }
+
+        @Override
         public void removePassenger(int targetEntity, int passengerID) {
             RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, Set.of(passengerID), pluginName);
             if (removePassengerEvent.isCancelled()) return;
@@ -97,6 +113,24 @@ public class PassengerManager {
             Set<Integer> passengers = pluginPassengers.get(targetEntity);
             if (passengers == null) return;
             passengers.removeAll(passengerIDs);
+            sendPassengerPacket(targetEntity);
+        }
+
+        @Override
+        public void removePassengers(int targetEntity, int[] passengerIDs) {
+            Set<Integer> passengerSet = Arrays.stream(passengerIDs)
+                    .boxed()
+                    .collect(Collectors.toSet());
+
+            RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, passengerSet, pluginName);
+            if (removePassengerEvent.isCancelled()) return;
+
+            Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
+            if (pluginPassengers == null) return;
+            Set<Integer> passengers = pluginPassengers.get(targetEntity);
+            if (passengers == null) return;
+
+            passengers.removeAll(passengerSet);
             sendPassengerPacket(targetEntity);
         }
 

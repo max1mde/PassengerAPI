@@ -13,8 +13,10 @@ public interface PassengerActions {
 
     void addPassenger(int targetEntity, int passengerEntity);
     void addPassengers(int targetEntity, @NotNull Set<Integer> passengerIDs);
+    void addPassengers(int targetEntity, int[] passengerIDs);
     void removePassenger(int targetEntity, int passengerID);
     void removePassengers(int targetEntity, @NotNull Set<Integer> passengerIDs);
+    void removePassengers(int targetEntity, int[] passengerIDs);
     void removeAllPassengers(int targetEntity);
     Set<Integer> getPassengers(int targetEntity);
 
