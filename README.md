@@ -58,6 +58,9 @@ Replace yourPluginInstance with the instance of your plugin's main class.
 
 Here are some examples of how to use the `PassengerActions` interface:
 
+Keep in mind that you can only retrive and remove passengers, which you have set here by using the addPassenger... methods.
+**Except:** when using the "global" methods like getGlobalPassengers.
+
 ```java
 // Add a single passenger
 passengerActions.addPassenger(targetEntityId, passengerEntityId);
