@@ -79,75 +79,63 @@ public final class PassengerAPI extends JavaPlugin {
             @Override
             public void addPassenger(int targetEntity, int passengerEntity) {
                 AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, Set.of(passengerEntity), pluginName);
-                if(!addPassengerEvent.isCancelled()) {
-                    passengersHashmap.computeIfAbsent(pluginName, k -> new HashMap<>())
-                            .computeIfAbsent(targetEntity, k -> new HashSet<>())
-                            .add(passengerEntity);
-                    sendPassengerPacket(targetEntity);
-                }
+                if(addPassengerEvent.isCancelled()) return;
+                passengersHashmap.computeIfAbsent(pluginName, k -> new HashMap<>())
+                        .computeIfAbsent(targetEntity, k -> new HashSet<>())
+                        .add(passengerEntity);
+                sendPassengerPacket(targetEntity);
             }
 
             @Override
             public void addPassengers(int targetEntity, @NotNull Set<Integer> passengerIDs) {
                 AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, passengerIDs, pluginName);
-                if(!addPassengerEvent.isCancelled()) {
-                    passengersHashmap.computeIfAbsent(pluginName, k -> new HashMap<>())
-                            .computeIfAbsent(targetEntity, k -> new HashSet<>())
-                            .addAll(passengerIDs);
-                    sendPassengerPacket(targetEntity);
-                }
+                if(addPassengerEvent.isCancelled()) return;
+                passengersHashmap.computeIfAbsent(pluginName, k -> new HashMap<>())
+                        .computeIfAbsent(targetEntity, k -> new HashSet<>())
+                        .addAll(passengerIDs);
+                sendPassengerPacket(targetEntity);
             }
 
             @Override
             public void removePassenger(int targetEntity, int passengerID) {
                 RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, Set.of(passengerID), pluginName);
-                if(!removePassengerEvent.isCancelled()) {
-                    Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
-                    if (pluginPassengers != null) {
-                        Set<Integer> passengers = pluginPassengers.get(targetEntity);
-                        if (passengers != null) {
-                            passengers.remove(passengerID);
-                            sendPassengerPacket(targetEntity);
-                        }
-                    }
-                }
+                if(removePassengerEvent.isCancelled()) return;
+                Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
+                if (pluginPassengers == null) return;
+                Set<Integer> passengers = pluginPassengers.get(targetEntity);
+                if (passengers == null) return;
+                passengers.remove(passengerID);
+                sendPassengerPacket(targetEntity);
             }
 
             @Override
             public void removePassengers(int targetEntity, @NotNull Set<Integer> passengerIDs) {
                 RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, passengerIDs, pluginName);
-                if(!removePassengerEvent.isCancelled()) {
-                    Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
-                    if (pluginPassengers != null) {
-                        Set<Integer> passengers = pluginPassengers.get(targetEntity);
-                        if (passengers != null) {
-                            passengers.removeAll(passengerIDs);
-                            sendPassengerPacket(targetEntity);
-                        }
-                    }
-                }
+                if(removePassengerEvent.isCancelled()) return;
+                Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
+                if (pluginPassengers == null) return;
+                Set<Integer> passengers = pluginPassengers.get(targetEntity);
+                if (passengers == null) return;
+                passengers.removeAll(passengerIDs);
+                sendPassengerPacket(targetEntity);
             }
 
             @Override
             public void removeAllPassengers(int targetEntity) {
                 Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
-                if (pluginPassengers != null) {
-                    RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, pluginPassengers.get(targetEntity), pluginName);
-                    if (!removePassengerEvent.isCancelled()) {
-                        pluginPassengers.remove(targetEntity);
-                        sendPassengerPacket(targetEntity);
-                    }
-                }
+                if (pluginPassengers == null) return;
+                RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, pluginPassengers.get(targetEntity), pluginName);
+                if (removePassengerEvent.isCancelled()) return;
+                pluginPassengers.remove(targetEntity);
+                sendPassengerPacket(targetEntity);
             }
 
             @Override
             public Set<Integer> getPassengers(int targetEntity) {
                 Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
-                if (pluginPassengers != null) {
-                    Set<Integer> passengers = pluginPassengers.get(targetEntity);
-                    return passengers != null ? new HashSet<>(passengers) : Set.of();
-                }
-                return Set.of();
+                if (pluginPassengers == null) return Set.of();
+                Set<Integer> passengers = pluginPassengers.get(targetEntity);
+                return passengers != null ? new HashSet<>(passengers) : Set.of();
             }
 
 
