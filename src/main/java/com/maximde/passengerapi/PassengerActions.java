@@ -1,6 +1,8 @@
 package com.maximde.passengerapi;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 public interface PassengerActions {
 
@@ -10,11 +12,11 @@ public interface PassengerActions {
      */
 
     void addPassenger(int targetEntity, int passengerEntity);
-    void addPassengers(int targetEntity, List<Integer> passengerIDs);
+    void addPassengers(int targetEntity, @NotNull Set<Integer> passengerIDs);
     void removePassenger(int targetEntity, int passengerID);
-    void removePassengers(int targetEntity, List<Integer> passengerIDs);
+    void removePassengers(int targetEntity, @NotNull Set<Integer> passengerIDs);
     void removeAllPassengers(int targetEntity);
-    List<Integer> getPassengers(int targetEntity);
+    Set<Integer> getPassengers(int targetEntity);
 
 
     // ----------------------------------
@@ -25,7 +27,7 @@ public interface PassengerActions {
      * @param targetEntity The entity on which the passengers are set
      * @param passengerIDs The passengers which should be removed
      */
-    void removeGlobalPassengers(int targetEntity, List<Integer> passengerIDs);
+    void removeGlobalPassengers(int targetEntity, @NotNull Set<Integer> passengerIDs);
     /** WARNING
      * This method removes ALL passengers from an entity. Not only the passengers set by your plugin
      * @param targetEntity The entity on which the passengers are set
@@ -36,5 +38,5 @@ public interface PassengerActions {
      * @param targetEntity
      * @return a list os passengers
      */
-    List<Integer> getGlobalPassengers(int targetEntity);
+    Set<Integer> getGlobalPassengers(int targetEntity);
 }

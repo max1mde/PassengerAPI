@@ -13,10 +13,11 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 public final class PassengerAPI extends JavaPlugin {
@@ -31,7 +32,7 @@ public final class PassengerAPI extends JavaPlugin {
      * Integer -> Passenger entity ID
      * List<Integer> -> The passenger ID's for this entity
      */
-    private final HashMap<String, HashMap<Integer, List<Integer>>> passengersHashmap = new HashMap<String, HashMap<Integer, List<Integer>>>();
+    private final Map<String, Map<Integer, Set<Integer>>> passengersHashmap = new ConcurrentHashMap<>();
 
     private static PassengerAPI instance;
 
@@ -47,6 +48,7 @@ public final class PassengerAPI extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         PacketEvents.getAPI().init();
         playerManager = PacketEvents.getAPI().getPlayerManager();
         protocolManager = PacketEvents.getAPI().getProtocolManager();
@@ -54,6 +56,14 @@ public final class PassengerAPI extends JavaPlugin {
     }
 
     public static PassengerActions getAPI(JavaPlugin plugin) {
+
+        if(instance == null) {
+            throw new NullPointerException("The plugin: " + plugin.getDescription().getName() +
+                    " Tried to access the passenger api before it has been initialized." +
+                    " Either the depend PassengerAPI in the plugin.yml is missing or the plugin: " + plugin.getDescription().getName() + " " +
+                    "shaded the passenger API into the own jar which should never happen!");
+        }
+
         return instance.initActions(plugin);
     }
 
@@ -64,124 +74,119 @@ public final class PassengerAPI extends JavaPlugin {
      */
     private PassengerActions initActions(JavaPlugin plugin) {
         String pluginName = plugin.getDescription().getName();
-        if (actions.containsKey(pluginName)) {
-            return actions.get(pluginName);
-        }
-        PassengerActions passengerActions =
-                new PassengerActions() {
 
-                    @Override
-                    public void addPassenger(int targetEntity, int passengerEntity) {
-                        AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, List.of(passengerEntity), pluginName);
-                        if(!addPassengerEvent.isCancelled()) {
-                        HashMap<Integer, List<Integer>> pluginPassengers = passengersHashmap.computeIfAbsent(pluginName, k -> new HashMap<>());
-                            pluginPassengers.computeIfAbsent(targetEntity, k -> new ArrayList<>()).add(passengerEntity);
+        return actions.computeIfAbsent(pluginName, key -> new PassengerActions() {
+            @Override
+            public void addPassenger(int targetEntity, int passengerEntity) {
+                AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, Set.of(passengerEntity), pluginName);
+                if(!addPassengerEvent.isCancelled()) {
+                    passengersHashmap.computeIfAbsent(pluginName, k -> new HashMap<>())
+                            .computeIfAbsent(targetEntity, k -> new HashSet<>())
+                            .add(passengerEntity);
+                    sendPassengerPacket(targetEntity);
+                }
+            }
+
+            @Override
+            public void addPassengers(int targetEntity, @NotNull Set<Integer> passengerIDs) {
+                AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, passengerIDs, pluginName);
+                if(!addPassengerEvent.isCancelled()) {
+                    passengersHashmap.computeIfAbsent(pluginName, k -> new HashMap<>())
+                            .computeIfAbsent(targetEntity, k -> new HashSet<>())
+                            .addAll(passengerIDs);
+                    sendPassengerPacket(targetEntity);
+                }
+            }
+
+            @Override
+            public void removePassenger(int targetEntity, int passengerID) {
+                RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, Set.of(passengerID), pluginName);
+                if(!removePassengerEvent.isCancelled()) {
+                    Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
+                    if (pluginPassengers != null) {
+                        Set<Integer> passengers = pluginPassengers.get(targetEntity);
+                        if (passengers != null) {
+                            passengers.remove(passengerID);
                             sendPassengerPacket(targetEntity);
                         }
                     }
+                }
+            }
 
-                    @Override
-                    public void addPassengers(int targetEntity, List<Integer> passengerIDs) {
-                        AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, passengerIDs, pluginName);
-                        if(!addPassengerEvent.isCancelled()) {
-                            HashMap<Integer, List<Integer>> pluginPassengers = passengersHashmap.computeIfAbsent(pluginName, k -> new HashMap<>());
-                            pluginPassengers.computeIfAbsent(targetEntity, k -> new ArrayList<>()).addAll(passengerIDs);
+            @Override
+            public void removePassengers(int targetEntity, @NotNull Set<Integer> passengerIDs) {
+                RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, passengerIDs, pluginName);
+                if(!removePassengerEvent.isCancelled()) {
+                    Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
+                    if (pluginPassengers != null) {
+                        Set<Integer> passengers = pluginPassengers.get(targetEntity);
+                        if (passengers != null) {
+                            passengers.removeAll(passengerIDs);
                             sendPassengerPacket(targetEntity);
                         }
                     }
+                }
+            }
 
-                    @Override
-                    public void removePassenger(int targetEntity, int passengerID) {
-                        RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, List.of(passengerID), pluginName);
-                        if(!removePassengerEvent.isCancelled()) {
-                            HashMap<Integer, List<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
-                            if (pluginPassengers != null) {
-                                List<Integer> passengers = pluginPassengers.get(targetEntity);
-                                if (passengers != null) {
-                                    passengers.remove(Integer.valueOf(passengerID));
-                                    sendPassengerPacket(targetEntity);
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void removePassengers(int targetEntity, List<Integer> passengerIDs) {
-                        RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, passengerIDs, pluginName);
-                        if(!removePassengerEvent.isCancelled()) {
-                            HashMap<Integer, List<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
-                            if (pluginPassengers != null) {
-                                List<Integer> passengers = pluginPassengers.get(targetEntity);
-                                if (passengers != null) {
-                                    passengers.removeAll(passengerIDs);
-                                    sendPassengerPacket(targetEntity);
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void removeAllPassengers(int targetEntity) {
-                        HashMap<Integer, List<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
-                        if (pluginPassengers != null) {
-                            RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, pluginPassengers.get(targetEntity), pluginName);
-                            if (!removePassengerEvent.isCancelled()) {
-                                pluginPassengers.remove(targetEntity);
-                                sendPassengerPacket(targetEntity);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public List<Integer> getPassengers(int targetEntity) {
-                        HashMap<Integer, List<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
-                        if (pluginPassengers != null) {
-                            List<Integer> passengers = pluginPassengers.get(targetEntity);
-                            return passengers != null ? new ArrayList<>(passengers) : List.of();
-                        }
-                        return List.of();
-                    }
-
-
-                    @Override
-                    public void removeGlobalPassengers(int targetEntity, List<Integer> passengerIDs) {
-                        passengersHashmap.values().forEach(map -> {
-                            List<Integer> passengers = map.get(targetEntity);
-                            if (passengers != null) {
-                                passengers.removeAll(passengerIDs);
-                            }
-                        });
+            @Override
+            public void removeAllPassengers(int targetEntity) {
+                Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
+                if (pluginPassengers != null) {
+                    RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, pluginPassengers.get(targetEntity), pluginName);
+                    if (!removePassengerEvent.isCancelled()) {
+                        pluginPassengers.remove(targetEntity);
                         sendPassengerPacket(targetEntity);
                     }
+                }
+            }
 
-                    @Override
-                    public void removeAllGlobalPassengers(int targetEntity) {
-                        passengersHashmap.values().forEach(map -> map.remove(targetEntity));
-                        sendPassengerPacket(targetEntity);
+            @Override
+            public Set<Integer> getPassengers(int targetEntity) {
+                Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
+                if (pluginPassengers != null) {
+                    Set<Integer> passengers = pluginPassengers.get(targetEntity);
+                    return passengers != null ? new HashSet<>(passengers) : Set.of();
+                }
+                return Set.of();
+            }
+
+
+            @Override
+            public void removeGlobalPassengers(int targetEntity, @NotNull Set<Integer> passengerIDs) {
+                passengersHashmap.values().forEach(map -> {
+                    Set<Integer> passengers = map.get(targetEntity);
+                    if (passengers != null) {
+                        passengers.removeAll(passengerIDs);
                     }
+                });
+                sendPassengerPacket(targetEntity);
+            }
+
+            @Override
+            public void removeAllGlobalPassengers(int targetEntity) {
+                passengersHashmap.values().forEach(map -> map.remove(targetEntity));
+                sendPassengerPacket(targetEntity);
+            }
 
 
-                    @Override
-                    public List<Integer> getGlobalPassengers(int targetEntity) {
-                        List<Integer> allPassengers = new ArrayList<>();
-                        passengersHashmap.values().forEach(map -> {
-                            List<Integer> passengers = map.get(targetEntity);
-                            if (passengers != null) {
-                                allPassengers.addAll(passengers);
-                            }
-                        });
-                        return allPassengers;
+            @Override
+            public Set<Integer> getGlobalPassengers(int targetEntity) {
+                Set<Integer> allPassengers = new HashSet<>();
+                passengersHashmap.values().forEach(map -> {
+                    Set<Integer> passengers = map.get(targetEntity);
+                    if (passengers != null) {
+                        allPassengers.addAll(passengers);
                     }
-                };
-        actions.put(pluginName, passengerActions);
-        return actions.get(pluginName);
+                });
+                return allPassengers;
+            }
+        });
     }
 
     private void sendPassengerPacket(int targetEntity) {
-        List<Integer> allPassengersList = passengersHashmap.values().stream()
-                .flatMap(map -> map.values().stream())
-                .flatMap(List::stream)
-                .toList();
+        Set<Integer> allPassengersList = passengersHashmap.values().stream()
+                .flatMap(map -> map.get(targetEntity).stream().filter(Objects::nonNull))
+                .collect(Collectors.toSet());
 
         int[] allPassengersArray = allPassengersList.stream().mapToInt(Integer::intValue).toArray();
 
@@ -189,7 +194,7 @@ public final class PassengerAPI extends JavaPlugin {
         PassengerPacketEvent passengerPacketEvent = new PassengerPacketEvent(targetEntity, allPassengersList, receivers);
         WrapperPlayServerSetPassengers packet = new WrapperPlayServerSetPassengers(targetEntity, allPassengersArray);
         Bukkit.getPluginManager().callEvent(passengerPacketEvent);
-        passengerPacketEvent.getPacketReceivers().forEach(p -> getPlayerManager().sendPacket(p, packet));
+        passengerPacketEvent.getPacketReceivers().forEach(player -> getPlayerManager().sendPacket(player, packet));
     }
 
 }

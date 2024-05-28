@@ -6,6 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import java.util.List;
+import java.util.Set;
 
 public class AddPassengerEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
@@ -18,11 +19,11 @@ public class AddPassengerEvent extends Event implements Cancellable {
      * Passengers which are getting added
      */
     @Getter
-    private final List<Integer> passengerList;
+    private final Set<Integer> passengerList;
     @Getter
     private final String pluginName;
 
-    public AddPassengerEvent(int targetEntityID, List<Integer> passengerList, String pluginName) {
+    public AddPassengerEvent(int targetEntityID, Set<Integer> passengerList, String pluginName) {
         this.targetEntityID = targetEntityID;
         this.passengerList = passengerList;
         this.pluginName = pluginName;

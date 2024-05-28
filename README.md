@@ -1,21 +1,23 @@
-# What is this?
-I'ts a Java API to use in your own plugins which also works as a plugin.
-Its made for easily managing passengers of any entities on any entities for multiple plugins.
-It does not matter if you entity exists or not as long as you provide an entity ID.
+# PassengerAPI
+PassengerAPI is a Java API that allows you to manage passengers (entities attached to other entities) for multiple plugins. 
+It works as a plugin and provides an easy-to-use interface for adding, removing, and retrieving passengers for any entity,
+regardless of whether the entity exists or not (NPC's, packet based entities...).
 
-# Why?
-Because of compatibility problems with other plugins
-which for example create entities by sending packets to a player and setting it as a passenger,
-which can cause problems with other plugins.
+# Why Use PassengerAPI?
+It solves compatibility issues that may arise when different plugins create entities  
+by sending packets to players and setting them as passengers.
+This can lead to conflicts and unintended behavior.
 
-# How to use?
+# Getting Started
 
-Add this plugin as compile only to your plugin and also
+1. Add PassengerAPI as a compile-only dependency to your plugin.
+2. Add the following line to your `plugin.yml` file:
 ```
 depend:
 - PassengerAPI
 ```
-to your `plugin.yml` file.
+
+# Usage
 
 Then you can get the passenger actions instance like that:
 
