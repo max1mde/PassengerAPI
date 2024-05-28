@@ -1,11 +1,13 @@
 package com.maximde.passengerapi;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.manager.player.PlayerManager;
 import com.github.retrooper.packetevents.manager.protocol.ProtocolManager;
 import com.maximde.passengerapi.command.PassengerCommand;
 import com.maximde.passengerapi.command.PassengerTabCompleter;
 import com.maximde.passengerapi.debugger.DebugEvents;
+import com.maximde.passengerapi.listeners.PacketSendListener;
 import com.maximde.passengerapi.utils.Metrics;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.Getter;
@@ -27,6 +29,8 @@ public final class PassengerAPI extends JavaPlugin {
         PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
                 .checkForUpdates(false)
                 .bStats(false);
+        PacketEvents.getAPI().getEventManager().registerListener(new PacketSendListener(this),
+                PacketListenerPriority.MONITOR);
         PacketEvents.getAPI().load();
     }
 
@@ -40,6 +44,7 @@ public final class PassengerAPI extends JavaPlugin {
         this.debugEvents = new DebugEvents(this);
         getCommand("passengerapi").setExecutor(new PassengerCommand(this));
         getCommand("passengerapi").setTabCompleter(new PassengerTabCompleter(this));
+        getServer().getPluginManager().registerEvents(debugEvents, this);
         new Metrics(this, 22033);
     }
 
@@ -53,4 +58,8 @@ public final class PassengerAPI extends JavaPlugin {
         return instance.passengerManager.initActions(plugin);
     }
 
+    @Override
+    public void onDisable() {
+        PacketEvents.getAPI().terminate();
+    }
 }

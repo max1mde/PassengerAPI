@@ -45,7 +45,7 @@ public class DebugEvents implements Listener {
         PassengerManager passengerManager = passengerAPI.getPassengerManager();
         StringBuilder actionBarText = new StringBuilder();
 
-        actionBarText.append(ChatColor.DARK_GREEN + "Plugins Setting Passengers: " + ChatColor.WHITE);
+        actionBarText.append(ChatColor.DARK_GREEN + "Plugins Using PassengerAPI: " + ChatColor.WHITE);
         actionBarText.append(passengerManager.getPassengersHashmap().keySet().size());
         actionBarText.append(ChatColor.DARK_GREEN + " Total Passengers: " + ChatColor.WHITE);
         actionBarText.append(passengerManager.getTotalPassengersCount());
@@ -67,7 +67,7 @@ public class DebugEvents implements Listener {
     public void onAddPassengerEvent(AddPassengerEvent event) {
         for (Player player : debugPlayers) {
             player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.YELLOW + "Debug" + ChatColor.DARK_GREEN + "] " + ChatColor.WHITE + "AddPassengerEvent: Plugin=" + event.getPluginName() +
-                    ", TargetEntity=" + event.getTargetEntityID() + ", Passengers=" + event.getPassengerList().size());
+                    ", TargetEntityID=" + event.getTargetEntityID() + ", PassengersAmount=" + event.getPassengerList().size());
         }
     }
 
@@ -75,15 +75,15 @@ public class DebugEvents implements Listener {
     public void onRemovePassengerEvent(RemovePassengerEvent event) {
         for (Player player : debugPlayers) {
             player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.YELLOW + "Debug" + ChatColor.DARK_GREEN + "] " + ChatColor.WHITE + "RemovePassengerEvent: Plugin=" + event.getPluginName() +
-                    ", TargetEntity=" + event.getTargetEntityID() + ", Passengers=" + event.getPassengerList().size());
+                    ", TargetEntityID=" + event.getTargetEntityID() + ", PassengersAmount=" + event.getPassengerList().size());
         }
     }
 
     @EventHandler
     public void onPassengerPacketEvent(PassengerPacketEvent event) {
         for (Player player : debugPlayers) {
-            player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.YELLOW + "Debug" + ChatColor.DARK_GREEN + "] " + ChatColor.WHITE + "PassengerPacketEvent: TargetEntity=" + event.getTargetEntityID() +
-                    ", Passengers=" + event.getPassengerList().size() + ", PacketReceivers=" + event.getPacketReceivers().size());
+            player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.YELLOW + "Debug" + ChatColor.DARK_GREEN + "] " + ChatColor.LIGHT_PURPLE + "PassengerPacketEvent: TargetEntityID=" + event.getTargetEntityID() +
+                    ", PassengersAmount=" + event.getPassengerList().size() + ", PacketReceiversAmount=" + event.getPacketReceivers().size());
         }
     }
 
