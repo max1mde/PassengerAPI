@@ -6,3 +6,6 @@ authors: [MaximDe]
 description: A passenger management API to make compatibility possible.
 depend:
   - packetevents
+
+commands:
+  passengerapi:

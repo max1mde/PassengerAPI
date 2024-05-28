@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSe
 import com.maximde.passengerapi.events.AddPassengerEvent;
 import com.maximde.passengerapi.events.PassengerPacketEvent;
 import com.maximde.passengerapi.events.RemovePassengerEvent;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,6 +21,7 @@ public class PassengerManager {
      * Integer -> Passenger entity ID
      * List<Integer> -> The passenger ID's for this entity
      */
+    @Getter
     private final Map<String, Map<Integer, Set<Integer>>> passengersHashmap = new ConcurrentHashMap<>();
     private final PlayerManager playerManager;
 
@@ -31,6 +33,22 @@ public class PassengerManager {
         String pluginName = plugin.getDescription().getName();
         return new PassengerActionsImpl(pluginName);
     }
+
+    public int getTotalPassengersCount() {
+        return passengersHashmap.values().stream()
+                .flatMap(map -> map.values().stream())
+                .flatMapToInt(set -> set.stream().mapToInt(Integer::intValue))
+                .sum();
+    }
+
+    public int getTotalTargetEntitiesCount() {
+        return passengersHashmap.values().stream()
+                .flatMap(map -> map.keySet().stream())
+                .mapToInt(Integer::intValue)
+                .distinct()
+                .sum();
+    }
+
     private class PassengerActionsImpl implements PassengerActions {
         private final String pluginName;
 
