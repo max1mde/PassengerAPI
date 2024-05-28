@@ -51,14 +51,14 @@ To access the PassengerAPI functionality, you need to obtain the PassengerAction
 ```java
 PassengerActions passengerActions = PassengerAPI.getAPI(yourPluginInstance);
 ```
-Replace yourPluginInstance with the instance of your plugin's main class.
+Replace yourPluginInstance with the instance of your plugin's main class.  
 (For example with `this` if you use it in your main class)
 
 ### Managing Passengers
 
 Here are some examples of how to use the `PassengerActions` interface:
 
-Keep in mind that you can only retrive and remove passengers, which you have set here by using the addPassenger... methods.
+Keep in mind that you can only retrive and remove passengers, which you have set here by using the addPassenger... methods.  
 **Except:** when using the "global" methods like getGlobalPassengers.
 
 ```java
