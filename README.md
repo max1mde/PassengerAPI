@@ -8,6 +8,12 @@ It solves compatibility issues that may arise when different plugins create enti
 by sending packets to players and setting them as passengers.  
 This can lead to conflicts and unintended behavior like unmounting of previous set passengers by other plugins.
 
+# Showcase
+
+https://github.com/max1mde/PassengerAPI/assets/114857048/224a9df1-3b22-4176-bfce-40a555fc71a2
+
+
+
 > [!IMPORTANT]  
 > This plugin **works out-of-the-box!**  
 > Just put it into your plugins folder and restart your server.  
