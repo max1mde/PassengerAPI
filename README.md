@@ -37,7 +37,7 @@ Permission `passengerapi.commands`
 /passengerapi debug 
 /passengerapi reload
 ```
-> [!NOTE]   
+> [!TIP]   
 > When you are in debug mode and holding a block in your hand
 > you will get additional debugging in chat.
 
