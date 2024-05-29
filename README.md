@@ -8,6 +8,12 @@ It solves compatibility issues that may arise when different plugins create enti
 by sending packets to players and setting them as passengers.  
 This can lead to conflicts and unintended behavior like unmounting of previous set passengers by other plugins.
 
+For example this makes these plugins automatically compatible with each other:
+- Better Chat Bubbles
+- ProdigyCape
+- VanillaMinimaps
+- PlayerMounts
+
 # Showcase
 
 https://github.com/max1mde/PassengerAPI/assets/114857048/224a9df1-3b22-4176-bfce-40a555fc71a2
@@ -21,6 +27,31 @@ https://github.com/max1mde/PassengerAPI/assets/114857048/224a9df1-3b22-4176-bfce
 >
 > BUT if you are a **developer** you can still add/access/remove passengers using this API!  
 > For example if you want to remove a passenger from an entity, without killing it, this could be usefull.
+
+
+# Commmands:
+
+Permission `passengerapi.commands`
+
+```
+/passengerapi debug 
+/passengerapi reload
+```
+> [!NOTE]   
+> When you are in debug mode and holding a block in your hand
+> you will get additional debugging in chat.
+
+# Config:
+
+```yml
+# DO NOT TOUCH ANYTHING IN THIS FILE
+# IF YOU ARE NOT 100% SURE WHAT YOU ARE DOING!
+
+AutoPassengerDetection:
+  SetPassengerPacket: true
+  EntityDestroyPacket: true
+```
+
 
 # Getting Started
 
@@ -132,3 +163,6 @@ public void onPassengerPacket(PassengerPacketEvent event) {
 }
 ```
 Don't forget to register your event class 
+
+
+# Contributions are welcome!
