@@ -22,6 +22,31 @@ https://github.com/max1mde/PassengerAPI/assets/114857048/224a9df1-3b22-4176-bfce
 > BUT if you are a **developer** you can still add/access/remove passengers using this API!  
 > For example if you want to remove a passenger from an entity, without killing it, this could be usefull.
 
+
+# Commmands:
+
+Permission `passengerapi.commands`
+
+```
+/passengerapi debug 
+/passengerapi reload
+```
+> [!NOTE]   
+> When you are in debug mode and holding a block in your hand
+> you will get additional debugging in chat.
+
+# Config:
+
+```yml
+# DO NOT TOUCH ANYTHING IN THIS FILE
+# IF YOU ARE NOT 100% SURE WHAT YOU ARE DOING!
+
+AutoPassengerDetection:
+  SetPassengerPacket: true
+  EntityDestroyPacket: true
+```
+
+
 # Getting Started
 
 1. Add PassengerAPI as a compile-only dependency to your plugin.
