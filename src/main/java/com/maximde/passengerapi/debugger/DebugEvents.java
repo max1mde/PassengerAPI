@@ -47,7 +47,7 @@ public class DebugEvents implements Listener {
         StringBuilder actionBarText = new StringBuilder();
 
         actionBarText.append(ChatColor.DARK_GREEN + "Plugins Using PassengerAPI: " + ChatColor.WHITE);
-        actionBarText.append(passengerManager.getPassengersHashmap().keySet().size() - 1);
+        actionBarText.append(passengerManager.getPassengersHashmap().keySet().size());
         actionBarText.append(ChatColor.DARK_GREEN + " Total Passengers: " + ChatColor.WHITE);
         actionBarText.append(passengerManager.getTotalPassengersCount());
         actionBarText.append(ChatColor.DARK_GREEN + " Total Target Entities: " + ChatColor.WHITE);

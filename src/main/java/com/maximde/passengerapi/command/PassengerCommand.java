@@ -28,7 +28,8 @@ public class PassengerCommand implements CommandExecutor {
 
         if(args.length < 1) {
             player.sendMessage("Commands:\n" +
-                    "- /passengerapi debug");
+                    "- /passengerapi debug\n" +
+                    "- /passengerapi reload");
             return false;
         }
 

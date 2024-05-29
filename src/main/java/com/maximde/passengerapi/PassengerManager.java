@@ -62,11 +62,28 @@ public class PassengerManager {
             Bukkit.getPluginManager().callEvent(removePassengerEvent);
             if (removePassengerEvent.isCancelled()) return;
 
-            passengersHashmap.keySet().forEach(key -> {
-                passengersHashmap.get(key).values().forEach(passengers -> passengers.removeAll(passengerSet));
-            });
+            Map<String, Map<Integer, Set<Integer>>> tempHashmap = new HashMap<>(passengersHashmap);
+            for (Map.Entry<String, Map<Integer, Set<Integer>>> entry : tempHashmap.entrySet()) {
+                Map<Integer, Set<Integer>> pluginMap = entry.getValue();
+                Map<Integer, Set<Integer>> newPluginMap = new HashMap<>();
 
-            if(sendPackets) sendPassengerPackets();
+                for (Map.Entry<Integer, Set<Integer>> pluginEntry : pluginMap.entrySet()) {
+                    int targetEntity = pluginEntry.getKey();
+                    Set<Integer> passengers = new HashSet<>(pluginEntry.getValue());
+                    passengers.removeAll(passengerSet);
+                    if (!passengers.isEmpty()) {
+                        newPluginMap.put(targetEntity, passengers);
+                    }
+                }
+
+                if (!newPluginMap.isEmpty()) {
+                    passengersHashmap.put(entry.getKey(), newPluginMap);
+                } else {
+                    passengersHashmap.remove(entry.getKey());
+                }
+            }
+
+            if (sendPackets) sendPassengerPackets();
         });
     }
 
@@ -147,6 +164,9 @@ public class PassengerManager {
             Set<Integer> passengers = pluginPassengers.get(targetEntity);
             if (passengers == null) return;
             passengers.remove(passengerID);
+            if (passengers.isEmpty()) {
+                pluginPassengers.remove(targetEntity);
+            }
             sendPassengerPacket(targetEntity);
         }
 
@@ -170,6 +190,9 @@ public class PassengerManager {
             Set<Integer> passengers = pluginPassengers.get(targetEntity);
             if (passengers == null) return;
             passengers.removeAll(passengerIDs);
+            if (passengers.isEmpty()) {
+                pluginPassengers.remove(targetEntity);
+            }
             sendPassengerPacket(targetEntity);
         }
 
@@ -186,8 +209,10 @@ public class PassengerManager {
             if (pluginPassengers == null) return;
             Set<Integer> passengers = pluginPassengers.get(targetEntity);
             if (passengers == null) return;
-
             passengers.removeAll(passengerSet);
+            if (passengers.isEmpty()) {
+                pluginPassengers.remove(targetEntity);
+            }
             sendPassengerPacket(targetEntity);
         }
 
@@ -203,7 +228,19 @@ public class PassengerManager {
             Bukkit.getPluginManager().callEvent(removePassengerEvent);
             if (removePassengerEvent.isCancelled()) return;
 
-            passengersHashmap.get(pluginName).values().forEach(passengers -> passengers.removeAll(passengerIDs));
+            passengersHashmap.keySet().forEach(key -> {
+                passengersHashmap.get(key).values().forEach(passengers -> passengers.removeAll(passengerIDs));
+                passengersHashmap.get(key).forEach((target, passengers) -> {
+                    passengers.removeAll(passengerIDs);
+                    if (passengersHashmap.get(key).get(target).isEmpty()) {
+                        passengersHashmap.get(key).remove(target);
+                    }
+                });
+                if (passengersHashmap.get(key).isEmpty()) {
+                    passengersHashmap.remove(key);
+                }
+            });
+
             sendPassengerPackets(pluginName);
         }
 
@@ -214,7 +251,7 @@ public class PassengerManager {
             RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, pluginPassengers.get(targetEntity), pluginName);
             Bukkit.getPluginManager().callEvent(removePassengerEvent);
             if (removePassengerEvent.isCancelled()) return;
-            pluginPassengers.remove(targetEntity);
+            pluginPassengers.remove(targetEntity, null);
             sendPassengerPacket(targetEntity);
         }
 
