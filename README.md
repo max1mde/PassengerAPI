@@ -88,6 +88,10 @@ To access the PassengerAPI functionality, you need to obtain the PassengerAction
 ```java
 PassengerActions passengerActions = PassengerAPI.getAPI(yourPluginInstance);
 ```
+
+> [!IMPORTANT]  
+> Do not use `getAPI()` before your onEnable() was called!
+
 Replace yourPluginInstance with the instance of your plugin's main class.  
 (For example with `this` if you use it in your main class)
 
