@@ -56,7 +56,7 @@ public final class PassengerAPI extends JavaPlugin {
     public static PassengerActions getAPI(JavaPlugin plugin) {
         if (instance == null) {
             throw new NullPointerException("The plugin: " + plugin.getDescription().getName() +
-                    " Tried to access the passenger api before it has been initialized." +
+                    " Tried to access the passenger api before it has been initialized (Use getAPI in your onEnable() not earlier)." +
                     " Either the depend PassengerAPI in the plugin.yml is missing or the plugin: " + plugin.getDescription().getName() + " " +
                     "shaded the passenger API into the own jar which should never happen!");
         }
