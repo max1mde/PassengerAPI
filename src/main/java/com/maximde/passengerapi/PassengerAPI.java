@@ -8,6 +8,7 @@ import com.maximde.passengerapi.command.PassengerCommand;
 import com.maximde.passengerapi.command.PassengerTabCompleter;
 import com.maximde.passengerapi.debugger.DebugEvents;
 import com.maximde.passengerapi.listeners.PacketSendListener;
+import com.maximde.passengerapi.utils.Config;
 import com.maximde.passengerapi.utils.Metrics;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.Getter;
@@ -22,6 +23,9 @@ public final class PassengerAPI extends JavaPlugin {
     private DebugEvents debugEvents;
     @Getter
     private PassengerManager passengerManager;
+
+    @Getter
+    private Config passengerConfig;
 
     @Override
     public void onLoad() {
@@ -38,9 +42,10 @@ public final class PassengerAPI extends JavaPlugin {
     public void onEnable() {
         instance = this;
         PacketEvents.getAPI().init();
-        playerManager = PacketEvents.getAPI().getPlayerManager();
-        protocolManager = PacketEvents.getAPI().getProtocolManager();
-        passengerManager = new PassengerManager(playerManager, this);
+        this.playerManager = PacketEvents.getAPI().getPlayerManager();
+        this.protocolManager = PacketEvents.getAPI().getProtocolManager();
+        this.passengerConfig = new Config(getDataFolder());
+        this.passengerManager = new PassengerManager(playerManager, this);
         this.debugEvents = new DebugEvents(this);
         getCommand("passengerapi").setExecutor(new PassengerCommand(this));
         getCommand("passengerapi").setTabCompleter(new PassengerTabCompleter(this));

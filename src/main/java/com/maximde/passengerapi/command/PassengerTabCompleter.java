@@ -36,7 +36,7 @@ public class PassengerTabCompleter implements TabCompleter {
         List<String> commands = new ArrayList<>();
 
         if (args.length == 1) {
-            commands.addAll(Arrays.asList("debug"));
+            commands.addAll(Arrays.asList("debug", "reload"));
             StringUtil.copyPartialMatches(args[0], commands, completions);
         }
 

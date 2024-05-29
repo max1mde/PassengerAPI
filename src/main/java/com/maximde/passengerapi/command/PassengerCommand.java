@@ -35,6 +35,10 @@ public class PassengerCommand implements CommandExecutor {
 
         switch (args[0]) {
             case "debug" -> passengerAPI.getDebugEvents().toggleDebugMode(player);
+            case "reload" -> {
+                passengerAPI.getPassengerConfig().reload();
+                player.sendMessage(ChatColor.GREEN + "Config reloaded!");
+            }
             default -> player.sendMessage(ChatColor.RED + "Command not found!");
         }
 

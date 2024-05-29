@@ -1,0 +1,6 @@
+# DO NOT TOUCH ANYTHING IN THIS FILE
+# IF YOU ARE NOT 100% SURE WHAT YOU ARE DOING!
+
+AutoPassengerDetection:
+  SetPassengerPacket: true
+  EntityDestroyPacket: true

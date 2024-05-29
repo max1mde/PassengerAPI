@@ -8,6 +8,10 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSe
 import com.maximde.passengerapi.PassengerAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
+
+import java.util.concurrent.atomic.AtomicReference;
+
 
 public class PacketSendListener implements PacketListener {
 
@@ -19,15 +23,31 @@ public class PacketSendListener implements PacketListener {
 
     @Override
     public void onPacketSend(PacketSendEvent event) {
-        if(event.getPacketType() == PacketType.Play.Server.SET_PASSENGERS) {
+        if(event.getPacketType() == PacketType.Play.Server.SET_PASSENGERS && this.passengerAPI.getPassengerConfig().isListenToPassengerSet()) {
             WrapperPlayServerSetPassengers packet = new WrapperPlayServerSetPassengers(event);
             passengerAPI.getPassengerManager().addPassengers(packet.getEntityId(), packet.getPassengers(), true);
             event.setCancelled(true);
         }
-        if(event.getPacketType() == PacketType.Play.Server.DESTROY_ENTITIES) {
+        if(event.getPacketType() == PacketType.Play.Server.DESTROY_ENTITIES && this.passengerAPI.getPassengerConfig().isListenToEntityDestroy()) {
             WrapperPlayServerDestroyEntities packet = new WrapperPlayServerDestroyEntities(event);
             passengerAPI.getPassengerManager().removePassengers(packet.getEntityIds(), false);
         }
+    }
+
+    private void debugPacket(WrapperPlayServerSetPassengers packet) {
+        AtomicReference<Entity> entity = new AtomicReference<>();
+        Bukkit.getScheduler().runTask(passengerAPI, t -> {
+            Bukkit.getWorld("world").getEntities().forEach(e -> {
+                if(e.getEntityId() == packet.getEntityId()) entity.set(e);
+            });
+
+            StringBuilder entityIDs = new StringBuilder();
+            for (int passenger : packet.getPassengers()) {
+                entityIDs.append(passenger + ", ");
+            }
+
+            Bukkit.broadcastMessage(ChatColor.RED + "" + entity.get().getName() + "  -> " + entityIDs.toString());
+        });
     }
 
 }
