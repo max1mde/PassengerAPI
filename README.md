@@ -157,3 +157,6 @@ public void onPassengerPacket(PassengerPacketEvent event) {
 }
 ```
 Don't forget to register your event class 
+
+
+# Contributions are welcome!
