@@ -307,6 +307,7 @@ public class PassengerManager {
 
     private void sendPassengerPacket(int targetEntity) {
         Set<Integer> allPassengersList = passengersHashmap.values().stream()
+                .filter(map -> map.get(targetEntity) != null)
                 .flatMap(map -> map.get(targetEntity).stream().filter(Objects::nonNull))
                 .collect(Collectors.toSet());
 
