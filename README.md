@@ -25,7 +25,7 @@ https://github.com/max1mde/PassengerAPI/assets/114857048/224a9df1-3b22-4176-bfce
 > Just put it into your plugins folder and restart your server.  
 > _It should fix most entity passenger compatibility bugs with other plugins_
 >
-> BUT if you are a **developer** you can still add/access/remove passengers using this API!  
+> BUT if you are a **developer** you can still add/access/remove passengers using this API (Not recommended)!  
 > For example if you want to remove a passenger from an entity, without killing it, this could be usefull.
 
 
@@ -91,6 +91,7 @@ PassengerActions passengerActions = PassengerAPI.getAPI(yourPluginInstance);
 
 > [!IMPORTANT]  
 > Do not use `getAPI()` before your onEnable() was called!
+>
 
 Replace yourPluginInstance with the instance of your plugin's main class.  
 (For example with `this` if you use it in your main class)
@@ -101,6 +102,9 @@ Here are some examples of how to use the `PassengerActions` interface:
 
 Keep in mind that you can only retrive and remove passengers, which you have set here by using the addPassenger... methods.  
 **Except:** when using the "global" methods like getGlobalPassengers.
+
+Only use the addPassenger.. methods from the api if your entity does not actually exist (Packet based)
+Try using Entity#addPassengers() instead if its a real entity... PassengerAPI will handle that automatically!
 
 ```java
 // Add a single passenger
