@@ -7,12 +7,15 @@ import com.github.retrooper.packetevents.manager.protocol.ProtocolManager;
 import com.maximde.passengerapi.command.PassengerCommand;
 import com.maximde.passengerapi.command.PassengerTabCompleter;
 import com.maximde.passengerapi.debugger.DebugEvents;
+import com.maximde.passengerapi.listeners.EntityUnMountListener;
 import com.maximde.passengerapi.listeners.PacketSendListener;
 import com.maximde.passengerapi.utils.Config;
 import com.maximde.passengerapi.utils.Metrics;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Set;
 
 public final class PassengerAPI extends JavaPlugin {
 
@@ -23,9 +26,9 @@ public final class PassengerAPI extends JavaPlugin {
     private DebugEvents debugEvents;
     @Getter
     private PassengerManager passengerManager;
-
     @Getter
     private Config passengerConfig;
+
 
     @Override
     public void onLoad() {
@@ -49,6 +52,7 @@ public final class PassengerAPI extends JavaPlugin {
         this.debugEvents = new DebugEvents(this);
         getCommand("passengerapi").setExecutor(new PassengerCommand(this));
         getCommand("passengerapi").setTabCompleter(new PassengerTabCompleter(this));
+        getServer().getPluginManager().registerEvents(new EntityUnMountListener(this), this);
         getServer().getPluginManager().registerEvents(debugEvents, this);
         new Metrics(this, 22033);
     }

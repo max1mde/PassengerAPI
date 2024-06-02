@@ -51,6 +51,22 @@ public class PassengerManager {
                 .size();
     }
 
+    public void removePassenger(int targetEntity, int passengerID, boolean sendPackets) {
+        RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, Set.of(passengerID), PLUGIN_NAME);
+        Bukkit.getPluginManager().callEvent(removePassengerEvent);
+        if (removePassengerEvent.isCancelled()) return;
+        for (Map<Integer, Set<Integer>> pluginPassengers : passengersHashmap.values()) {
+            if (pluginPassengers == null) continue;
+            Set<Integer> passengers = pluginPassengers.get(targetEntity);
+            if (passengers == null) return;
+            passengers.remove(passengerID);
+            if (passengers.isEmpty()) {
+                pluginPassengers.remove(targetEntity);
+            }
+        }
+        if (sendPackets) sendPassengerPacket(targetEntity);
+    }
+
     /**
      * Internal method for the PassengerAPI
      * Don't even try to use it somehow in your own plugin!

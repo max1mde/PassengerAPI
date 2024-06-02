@@ -17,7 +17,7 @@ public class Config {
 
     private boolean listenToPassengerSet;
     private boolean listenToEntityDestroy;
-
+    private boolean vehicleExitEvent;
 
     public Config(File dataFolder) {
         this.dataFolder = dataFolder;
@@ -30,11 +30,13 @@ public class Config {
     private void initDefaults() {
         setIfNot("AutoPassengerDetection.SetPassengerPacket", true);
         setIfNot("AutoPassengerDetection.EntityDestroyPacket", true);
+        setIfNot("AutoPassengerDetection.VehicleExitEvent", true);
     }
 
     private void initValues() {
         this.listenToPassengerSet = cfg.getBoolean("AutoPassengerDetection.SetPassengerPacket");
         this.listenToEntityDestroy = cfg.getBoolean("AutoPassengerDetection.EntityDestroyPacket");
+        this.vehicleExitEvent = cfg.getBoolean("AutoPassengerDetection.EntityDestroyPacket");
     }
 
     public boolean isConfigEmpty() {
