@@ -50,6 +50,7 @@ Permission `passengerapi.commands`
 AutoPassengerDetection:
   SetPassengerPacket: true
   EntityDestroyPacket: true
+  VehicleExitEvent: true
 ```
 
 
