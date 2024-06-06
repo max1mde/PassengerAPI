@@ -35,7 +35,7 @@ public final class PassengerAPI extends JavaPlugin {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
                 .checkForUpdates(false)
-                .bStats(false);
+                .bStats(true);
         PacketEvents.getAPI().getEventManager().registerListener(new PacketSendListener(this),
                 PacketListenerPriority.HIGHEST);
         PacketEvents.getAPI().load();

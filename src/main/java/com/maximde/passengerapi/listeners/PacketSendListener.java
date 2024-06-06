@@ -11,8 +11,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -28,8 +26,6 @@ public class PacketSendListener implements PacketListener {
     public void onPacketSend(PacketSendEvent event) {
         if(event.getPacketType() == PacketType.Play.Server.SET_PASSENGERS && this.passengerAPI.getPassengerConfig().isListenToPassengerSet()) {
             WrapperPlayServerSetPassengers packet = new WrapperPlayServerSetPassengers(event);
-
-
             passengerAPI.getPassengerManager().addPassengers(packet.getEntityId(), packet.getPassengers(), true);
             event.setCancelled(true);
         }
