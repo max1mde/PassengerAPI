@@ -15,7 +15,6 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Set;
 
 public final class PassengerAPI extends JavaPlugin {
 

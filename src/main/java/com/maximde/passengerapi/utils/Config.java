@@ -13,7 +13,7 @@ public class Config {
 
     private File file;
     private YamlConfiguration cfg;
-    private File dataFolder;
+    private final File dataFolder;
 
     private boolean listenToPassengerSet;
     private boolean listenToEntityDestroy;

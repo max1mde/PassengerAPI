@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.checkerframework.framework.qual.Unused;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -51,6 +52,7 @@ public class PacketSendListener implements PacketListener {
         });
     }
 
+    // TODO replace with something better...
     public boolean doesEntityExist(int entityId) {
         for(World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
