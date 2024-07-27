@@ -7,11 +7,12 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers;
 import com.maximde.passengerapi.PassengerAPI;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.checkerframework.framework.qual.Unused;
+import org.bukkit.entity.Player;
 
+
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -27,6 +28,9 @@ public class PacketSendListener implements PacketListener {
     public void onPacketSend(PacketSendEvent event) {
         if(event.getPacketType() == PacketType.Play.Server.SET_PASSENGERS && this.passengerAPI.getPassengerConfig().isListenToPassengerSet()) {
             WrapperPlayServerSetPassengers packet = new WrapperPlayServerSetPassengers(event);
+            for (int passenger : packet.getPassengers()) {
+                isPlayer(passenger).map(player -> passengerAPI.getVehicles().put(player, passenger));
+            }
             passengerAPI.getPassengerManager().addPassengers(packet.getEntityId(), packet.getPassengers(), true);
             event.setCancelled(true);
         }
@@ -48,7 +52,7 @@ public class PacketSendListener implements PacketListener {
                 entityIDs.append(passenger + ", ");
             }
 
-            Bukkit.broadcastMessage(ChatColor.RED + "" + entity.get().getName() + "  -> " + entityIDs.toString());
+            //Bukkit.broadcastMessage(ChatColor.RED + "" + entity.get().getName() + "  -> " + entityIDs.toString());
         });
     }
 
@@ -62,6 +66,17 @@ public class PacketSendListener implements PacketListener {
             }
         }
         return false;
+    }
+
+    public Optional<Player> isPlayer(int entityId) {
+        for(World world : Bukkit.getWorlds()) {
+            for (Entity entity : world.getEntities()) {
+                if (entity.getEntityId() == entityId && entity instanceof Player player) {
+                    return Optional.of(player);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
 }
