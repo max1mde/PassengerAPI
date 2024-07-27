@@ -150,12 +150,10 @@ public void onAddPassenger(AddPassengerEvent event) {
     String pluginName = event.getPluginName();
     int targetEntity = event.getTargetEntityID();
     Set<Integer> passengers = event.getPassengerList();
-    // Perform actions with these properties
 }
 
 @EventHandler
 public void onRemovePassenger(RemovePassengerEvent event) {
-    // The name of the plugin which tries to remove these passengers
     String pluginName = event.getPluginName();
     int targetEntity = event.getTargetEntityID();
     Set<Integer> removedPassengers = event.getPassengerList();
@@ -168,7 +166,6 @@ public void onPassengerPacket(PassengerPacketEvent event) {
     Set<Integer> passengers = event.getPassengerList();
     // Which players should receive the packet (You can modify that list)
     List<Player> receivers = event.getPacketReceivers();
-    // Perform actions with these properties
 }
 ```
 Don't forget to register your event class 
