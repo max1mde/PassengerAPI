@@ -51,6 +51,7 @@ AutoPassengerDetection:
   SetPassengerPacket: true
   EntityDestroyPacket: true
   VehicleExitEvent: true
+  VehicleExitPacket: true
 ```
 
 
