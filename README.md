@@ -67,10 +67,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.max1mde:PassengerAPI:1.4.0'
+    implementation 'com.github.max1mde:PassengerAPI:<VERSION>'
 }
 ```
-(For maven: https://jitpack.io/#max1mde/PassengerAPI/1.4.0)  
+(More information: https://jitpack.io/#max1mde/PassengerAPI)  
 
 2. Add the following line to your `plugin.yml` file:
 ```
