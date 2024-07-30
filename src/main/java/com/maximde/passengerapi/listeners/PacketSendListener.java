@@ -6,7 +6,9 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers;
 import com.maximde.passengerapi.PassengerAPI;
+import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -26,20 +28,33 @@ public class PacketSendListener implements PacketListener {
 
     @Override
     public void onPacketSend(PacketSendEvent event) {
+
         if(event.getPacketType() == PacketType.Play.Server.SET_PASSENGERS && this.passengerAPI.getPassengerConfig().isListenToPassengerSet()) {
             WrapperPlayServerSetPassengers packet = new WrapperPlayServerSetPassengers(event);
             for (int passenger : packet.getPassengers()) {
-                isPlayer(passenger).map(player -> passengerAPI.getVehicles().put(player, passenger));
+                isPlayer(passenger, ((Player) event.getPlayer()).getWorld()).map(player -> passengerAPI.getVehicles().put(player, passenger));
             }
             passengerAPI.getPassengerManager().addPassengers(packet.getEntityId(), packet.getPassengers(), true);
             event.setCancelled(true);
         }
+
         if(event.getPacketType() == PacketType.Play.Server.DESTROY_ENTITIES && this.passengerAPI.getPassengerConfig().isListenToEntityDestroy()) {
             WrapperPlayServerDestroyEntities packet = new WrapperPlayServerDestroyEntities(event);
             passengerAPI.getPassengerManager().removePassengers(packet.getEntityIds(), false);
         }
     }
 
+    public boolean doesEntityExist(int entityId, World world) {
+        return SpigotConversionUtil.getEntityById(world, entityId) != null;
+    }
+
+    public Optional<Player> isPlayer(int entityId, World world) {
+        Entity entity = SpigotConversionUtil.getEntityById(world, entityId);
+        if(entity instanceof Player player) return Optional.of(player);
+        return Optional.empty();
+    }
+
+    @Deprecated
     private void debugPacket(WrapperPlayServerSetPassengers packet) {
         AtomicReference<Entity> entity = new AtomicReference<>();
         Bukkit.getScheduler().runTask(passengerAPI, t -> {
@@ -52,31 +67,8 @@ public class PacketSendListener implements PacketListener {
                 entityIDs.append(passenger + ", ");
             }
 
-            //Bukkit.broadcastMessage(ChatColor.RED + "" + entity.get().getName() + "  -> " + entityIDs.toString());
+            Bukkit.broadcastMessage(ChatColor.RED + entity.get().getName() + "  -> " + entityIDs.toString());
         });
-    }
-
-    // TODO replace with something better...
-    public boolean doesEntityExist(int entityId) {
-        for(World world : Bukkit.getWorlds()) {
-            for (Entity entity : world.getEntities()) {
-                if (entity.getEntityId() == entityId) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public Optional<Player> isPlayer(int entityId) {
-        for(World world : Bukkit.getWorlds()) {
-            for (Entity entity : world.getEntities()) {
-                if (entity.getEntityId() == entityId && entity instanceof Player player) {
-                    return Optional.of(player);
-                }
-            }
-        }
-        return Optional.empty();
     }
 
 }

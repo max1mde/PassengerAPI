@@ -1,13 +1,16 @@
 package com.maximde.passengerapi.events;
 
 import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import java.util.List;
 import java.util.Set;
 
-public class AddPassengerEvent extends Event implements Cancellable {
+public class AsyncPassengerPacketEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
 
@@ -15,17 +18,18 @@ public class AddPassengerEvent extends Event implements Cancellable {
     private final int targetEntityID;
 
     /**
-     * Passengers which are getting added
+     * Passengers which are getting removed or added (Just an updated list)
      */
     @Getter
     private final Set<Integer> passengerList;
-    @Getter
-    private final String pluginName;
+    @Getter @Setter
+    private List<Player> packetReceivers;
 
-    public AddPassengerEvent(int targetEntityID, Set<Integer> passengerList, String pluginName) {
+    public AsyncPassengerPacketEvent(boolean async, int targetEntityID, Set<Integer> passengerList, List<Player> packetReceivers) {
+        super(async);
         this.targetEntityID = targetEntityID;
         this.passengerList = passengerList;
-        this.pluginName = pluginName;
+        this.packetReceivers = packetReceivers;
     }
 
     @Override
@@ -47,3 +51,4 @@ public class AddPassengerEvent extends Event implements Cancellable {
         return handlers;
     }
 }
+

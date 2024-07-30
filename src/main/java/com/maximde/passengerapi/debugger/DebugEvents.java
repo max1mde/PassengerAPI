@@ -2,9 +2,9 @@ package com.maximde.passengerapi.debugger;
 
 import com.maximde.passengerapi.PassengerAPI;
 import com.maximde.passengerapi.PassengerManager;
-import com.maximde.passengerapi.events.AddPassengerEvent;
-import com.maximde.passengerapi.events.PassengerPacketEvent;
-import com.maximde.passengerapi.events.RemovePassengerEvent;
+import com.maximde.passengerapi.events.AsyncAddPassengerEvent;
+import com.maximde.passengerapi.events.AsyncPassengerPacketEvent;
+import com.maximde.passengerapi.events.AsyncRemovePassengerEvent;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -65,7 +65,7 @@ public class DebugEvents implements Listener {
     }
 
     @EventHandler
-    public void onAddPassengerEvent(AddPassengerEvent event) {
+    public void onAddPassengerEvent(AsyncAddPassengerEvent event) {
         for (Player player : debugPlayers) {
             if(player.getItemInHand().getType() == Material.AIR) continue;
             player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.YELLOW + "Debug" + ChatColor.DARK_GREEN + "] " + ChatColor.WHITE + "AddPassengerEvent: Plugin=" + event.getPluginName() +
@@ -74,7 +74,7 @@ public class DebugEvents implements Listener {
     }
 
     @EventHandler
-    public void onRemovePassengerEvent(RemovePassengerEvent event) {
+    public void onRemovePassengerEvent(AsyncRemovePassengerEvent event) {
         for (Player player : debugPlayers) {
             if(player.getItemInHand().getType() == Material.AIR) continue;
             player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.YELLOW + "Debug" + ChatColor.DARK_GREEN + "] " + ChatColor.WHITE + "RemovePassengerEvent: Plugin=" + event.getPluginName() +
@@ -83,7 +83,7 @@ public class DebugEvents implements Listener {
     }
 
     @EventHandler
-    public void onPassengerPacketEvent(PassengerPacketEvent event) {
+    public void onPassengerPacketEvent(AsyncPassengerPacketEvent event) {
         for (Player player : debugPlayers) {
             if(player.getItemInHand().getType() == Material.AIR) continue;
             player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.YELLOW + "Debug" + ChatColor.DARK_GREEN + "] " + ChatColor.LIGHT_PURPLE + "PassengerPacketEvent: TargetEntityID=" + event.getTargetEntityID() +

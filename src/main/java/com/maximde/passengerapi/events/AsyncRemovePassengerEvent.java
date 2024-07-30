@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
 
 import java.util.Set;
 
-public class RemovePassengerEvent extends Event implements Cancellable {
+public class AsyncRemovePassengerEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
 
@@ -22,7 +22,8 @@ public class RemovePassengerEvent extends Event implements Cancellable {
     @Getter
     private final String pluginName;
 
-    public RemovePassengerEvent(int targetEntityID, Set<Integer> passengerList, String pluginName) {
+    public AsyncRemovePassengerEvent(boolean async, int targetEntityID, Set<Integer> passengerList, String pluginName) {
+        super(async);
         this.targetEntityID = targetEntityID;
         this.passengerList = passengerList;
         this.pluginName = pluginName;

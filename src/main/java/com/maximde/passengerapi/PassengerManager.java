@@ -2,9 +2,9 @@ package com.maximde.passengerapi;
 
 import com.github.retrooper.packetevents.manager.player.PlayerManager;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers;
-import com.maximde.passengerapi.events.AddPassengerEvent;
-import com.maximde.passengerapi.events.PassengerPacketEvent;
-import com.maximde.passengerapi.events.RemovePassengerEvent;
+import com.maximde.passengerapi.events.AsyncAddPassengerEvent;
+import com.maximde.passengerapi.events.AsyncPassengerPacketEvent;
+import com.maximde.passengerapi.events.AsyncRemovePassengerEvent;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -51,8 +51,8 @@ public class PassengerManager {
                 .size();
     }
 
-    public void removePassenger(int targetEntity, int passengerID, boolean sendPackets) {
-        RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, Set.of(passengerID), PLUGIN_NAME);
+    public void removePassenger(boolean async, int targetEntity, int passengerID, boolean sendPackets) {
+        AsyncRemovePassengerEvent removePassengerEvent = new AsyncRemovePassengerEvent(async, targetEntity, Set.of(passengerID), PLUGIN_NAME);
         Bukkit.getPluginManager().callEvent(removePassengerEvent);
         if (removePassengerEvent.isCancelled()) return;
         for (Map<Integer, Set<Integer>> pluginPassengers : passengersHashmap.values()) {
@@ -64,7 +64,7 @@ public class PassengerManager {
                 pluginPassengers.remove(targetEntity);
             }
         }
-        if (sendPackets) sendPassengerPacket(targetEntity);
+        if (sendPackets) sendPassengerPacket(async,targetEntity);
     }
 
     /**
@@ -74,7 +74,7 @@ public class PassengerManager {
     public void removePassengers(int[] passengerIDs, boolean sendPackets) {
         Bukkit.getScheduler().runTask(passengerAPI, bukkitTask -> {
             Set<Integer> passengerSet = Arrays.stream(passengerIDs).boxed().collect(Collectors.toSet());
-            RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(-1, passengerSet, PLUGIN_NAME);
+            AsyncRemovePassengerEvent removePassengerEvent = new AsyncRemovePassengerEvent(false,-1, passengerSet, PLUGIN_NAME);
             Bukkit.getPluginManager().callEvent(removePassengerEvent);
             if (removePassengerEvent.isCancelled()) return;
 
@@ -99,7 +99,7 @@ public class PassengerManager {
                 }
             }
 
-            if (sendPackets) sendPassengerPackets();
+            if (sendPackets) sendPassengerPackets(false);
         });
     }
 
@@ -113,14 +113,14 @@ public class PassengerManager {
                     .boxed()
                     .collect(Collectors.toSet());
 
-            AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, passengerSet, PLUGIN_NAME);
+            AsyncAddPassengerEvent addPassengerEvent = new AsyncAddPassengerEvent(false, targetEntity, passengerSet, PLUGIN_NAME);
             Bukkit.getPluginManager().callEvent(addPassengerEvent);
             if (addPassengerEvent.isCancelled()) return;
             passengersHashmap.computeIfAbsent(PLUGIN_NAME, k -> new HashMap<>())
                     .computeIfAbsent(targetEntity, k -> new HashSet<>())
                     .addAll(passengerSet);
 
-            if (sendPackets) sendPassengerPacket(targetEntity);
+            if (sendPackets) sendPassengerPacket(false,targetEntity);
         });
     }
 
@@ -133,46 +133,46 @@ public class PassengerManager {
         }
 
         @Override
-        public void addPassenger(int targetEntity, int passengerEntity) {
-            AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, Set.of(passengerEntity), pluginName);
+        public void addPassenger(boolean async, int targetEntity, int passengerEntity) {
+            AsyncAddPassengerEvent addPassengerEvent = new AsyncAddPassengerEvent(async, targetEntity, Set.of(passengerEntity), pluginName);
             Bukkit.getPluginManager().callEvent(addPassengerEvent);
             if (addPassengerEvent.isCancelled()) return;
             passengersHashmap.computeIfAbsent(pluginName, k -> new HashMap<>())
                     .computeIfAbsent(targetEntity, k -> new HashSet<>())
                     .add(passengerEntity);
-            sendPassengerPacket(targetEntity);
+            sendPassengerPacket(async,targetEntity);
         }
 
         @Override
-        public void addPassengers(int targetEntity, @NotNull Set<Integer> passengerIDs) {
-            AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, passengerIDs, pluginName);
+        public void addPassengers(boolean async, int targetEntity, @NotNull Set<Integer> passengerIDs) {
+            AsyncAddPassengerEvent addPassengerEvent = new AsyncAddPassengerEvent(async, targetEntity, passengerIDs, pluginName);
             Bukkit.getPluginManager().callEvent(addPassengerEvent);
             if (addPassengerEvent.isCancelled()) return;
             passengersHashmap.computeIfAbsent(pluginName, k -> new HashMap<>())
                     .computeIfAbsent(targetEntity, k -> new HashSet<>())
                     .addAll(passengerIDs);
-            sendPassengerPacket(targetEntity);
+            sendPassengerPacket(async,targetEntity);
         }
 
         @Override
-        public void addPassengers(int targetEntity, int[] passengerIDs) {
+        public void addPassengers(boolean async, int targetEntity, int[] passengerIDs) {
             Set<Integer> passengerSet = Arrays.stream(passengerIDs)
                     .boxed()
                     .collect(Collectors.toSet());
 
-            AddPassengerEvent addPassengerEvent = new AddPassengerEvent(targetEntity, passengerSet, pluginName);
+            AsyncAddPassengerEvent addPassengerEvent = new AsyncAddPassengerEvent(async, targetEntity, passengerSet, pluginName);
             Bukkit.getPluginManager().callEvent(addPassengerEvent);
             if (addPassengerEvent.isCancelled()) return;
             passengersHashmap.computeIfAbsent(pluginName, k -> new HashMap<>())
                     .computeIfAbsent(targetEntity, k -> new HashSet<>())
                     .addAll(passengerSet);
 
-            sendPassengerPacket(targetEntity);
+            sendPassengerPacket(async,targetEntity);
         }
 
         @Override
-        public void removePassenger(int targetEntity, int passengerID) {
-            RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, Set.of(passengerID), pluginName);
+        public void removePassenger(boolean async, int targetEntity, int passengerID) {
+            AsyncRemovePassengerEvent removePassengerEvent = new AsyncRemovePassengerEvent(async, targetEntity, Set.of(passengerID), pluginName);
             Bukkit.getPluginManager().callEvent(removePassengerEvent);
             if (removePassengerEvent.isCancelled()) return;
             Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
@@ -183,22 +183,22 @@ public class PassengerManager {
             if (passengers.isEmpty()) {
                 pluginPassengers.remove(targetEntity);
             }
-            sendPassengerPacket(targetEntity);
+            sendPassengerPacket(async,targetEntity);
         }
 
         @Override
-        public void removePassenger(int passengerID) {
-            RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(-1, Set.of(passengerID), pluginName);
+        public void removePassenger(boolean async, int passengerID) {
+            AsyncRemovePassengerEvent removePassengerEvent = new AsyncRemovePassengerEvent(async, -1, Set.of(passengerID), pluginName);
             Bukkit.getPluginManager().callEvent(removePassengerEvent);
             if (removePassengerEvent.isCancelled()) return;
 
             passengersHashmap.get(pluginName).values().forEach(passengers -> passengers.remove(passengerID));
-            sendPassengerPackets(pluginName);
+            sendPassengerPackets(async, pluginName);
         }
 
         @Override
-        public void removePassengers(int targetEntity, @NotNull Set<Integer> passengerIDs) {
-            RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, passengerIDs, pluginName);
+        public void removePassengers(boolean async, int targetEntity, @NotNull Set<Integer> passengerIDs) {
+            AsyncRemovePassengerEvent removePassengerEvent = new AsyncRemovePassengerEvent(async, targetEntity, passengerIDs, pluginName);
             Bukkit.getPluginManager().callEvent(removePassengerEvent);
             if (removePassengerEvent.isCancelled()) return;
             Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
@@ -209,16 +209,16 @@ public class PassengerManager {
             if (passengers.isEmpty()) {
                 pluginPassengers.remove(targetEntity);
             }
-            sendPassengerPacket(targetEntity);
+            sendPassengerPacket(async,targetEntity);
         }
 
         @Override
-        public void removePassengers(int targetEntity, int[] passengerIDs) {
+        public void removePassengers(boolean async, int targetEntity, int[] passengerIDs) {
             Set<Integer> passengerSet = Arrays.stream(passengerIDs)
                     .boxed()
                     .collect(Collectors.toSet());
 
-            RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, passengerSet, pluginName);
+            AsyncRemovePassengerEvent removePassengerEvent = new AsyncRemovePassengerEvent(async, targetEntity, passengerSet, pluginName);
             Bukkit.getPluginManager().callEvent(removePassengerEvent);
             if (removePassengerEvent.isCancelled()) return;
             Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
@@ -229,18 +229,18 @@ public class PassengerManager {
             if (passengers.isEmpty()) {
                 pluginPassengers.remove(targetEntity);
             }
-            sendPassengerPacket(targetEntity);
+            sendPassengerPacket(async,targetEntity);
         }
 
         @Override
-        public void removePassengers(int[] passengerIDs) {
+        public void removePassengers(boolean async, int[] passengerIDs) {
             Set<Integer> passengerSet = Arrays.stream(passengerIDs).boxed().collect(Collectors.toSet());
-            removePassengers(passengerSet);
+            removePassengers(async, passengerSet);
         }
 
         @Override
-        public void removePassengers(@NotNull Set<Integer> passengerIDs) {
-            RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(-1, passengerIDs, pluginName);
+        public void removePassengers(boolean async, @NotNull Set<Integer> passengerIDs) {
+            AsyncRemovePassengerEvent removePassengerEvent = new AsyncRemovePassengerEvent(async, -1, passengerIDs, pluginName);
             Bukkit.getPluginManager().callEvent(removePassengerEvent);
             if (removePassengerEvent.isCancelled()) return;
 
@@ -257,22 +257,22 @@ public class PassengerManager {
                 }
             });
 
-            sendPassengerPackets(pluginName);
+            sendPassengerPackets(async, pluginName);
         }
 
         @Override
-        public void removeAllPassengers(int targetEntity) {
+        public void removeAllPassengers(boolean async, int targetEntity) {
             Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
             if (pluginPassengers == null) return;
-            RemovePassengerEvent removePassengerEvent = new RemovePassengerEvent(targetEntity, pluginPassengers.get(targetEntity), pluginName);
+            AsyncRemovePassengerEvent removePassengerEvent = new AsyncRemovePassengerEvent(async, targetEntity, pluginPassengers.get(targetEntity), pluginName);
             Bukkit.getPluginManager().callEvent(removePassengerEvent);
             if (removePassengerEvent.isCancelled()) return;
             pluginPassengers.remove(targetEntity, null);
-            sendPassengerPacket(targetEntity);
+            sendPassengerPacket(async,targetEntity);
         }
 
         @Override
-        public Set<Integer> getPassengers(int targetEntity) {
+        public Set<Integer> getPassengers(boolean async, int targetEntity) {
             Map<Integer, Set<Integer>> pluginPassengers = passengersHashmap.get(pluginName);
             if (pluginPassengers == null) return Set.of();
             Set<Integer> passengers = pluginPassengers.get(targetEntity);
@@ -281,25 +281,25 @@ public class PassengerManager {
 
 
         @Override
-        public void removeGlobalPassengers(int targetEntity, @NotNull Set<Integer> passengerIDs) {
+        public void removeGlobalPassengers(boolean async, int targetEntity, @NotNull Set<Integer> passengerIDs) {
             passengersHashmap.values().forEach(map -> {
                 Set<Integer> passengers = map.get(targetEntity);
                 if (passengers != null) {
                     passengers.removeAll(passengerIDs);
                 }
             });
-            sendPassengerPacket(targetEntity);
+            sendPassengerPacket(async,targetEntity);
         }
 
         @Override
-        public void removeAllGlobalPassengers(int targetEntity) {
+        public void removeAllGlobalPassengers(boolean async, int targetEntity) {
             passengersHashmap.values().forEach(map -> map.remove(targetEntity));
-            sendPassengerPacket(targetEntity);
+            sendPassengerPacket(async, targetEntity);
         }
 
 
         @Override
-        public Set<Integer> getGlobalPassengers(int targetEntity) {
+        public Set<Integer> getGlobalPassengers(boolean async, int targetEntity) {
             Set<Integer> allPassengers = new HashSet<>();
             passengersHashmap.values().forEach(map -> {
                 Set<Integer> passengers = map.get(targetEntity);
@@ -313,15 +313,15 @@ public class PassengerManager {
 
     }
 
-    private void sendPassengerPackets() {
-        passengersHashmap.keySet().forEach(this::sendPassengerPackets);
+    private void sendPassengerPackets(boolean async) {
+        passengersHashmap.keySet().forEach(key -> sendPassengerPackets(async, key));
     }
 
-    private void sendPassengerPackets(String pluginName) {
-        passengersHashmap.get(pluginName).keySet().forEach(PassengerManager.this::sendPassengerPacket);
+    private void sendPassengerPackets(boolean async, String pluginName) {
+        passengersHashmap.get(pluginName).keySet().forEach(entity -> sendPassengerPacket(async, entity));
     }
 
-    private void sendPassengerPacket(int targetEntity) {
+    private void sendPassengerPacket(boolean async, int targetEntity) {
         Set<Integer> allPassengersList = passengersHashmap.values().stream()
                 .filter(map -> map.get(targetEntity) != null)
                 .flatMap(map -> map.get(targetEntity).stream().filter(Objects::nonNull))
@@ -330,7 +330,7 @@ public class PassengerManager {
         int[] allPassengersArray = allPassengersList.stream().mapToInt(Integer::intValue).toArray();
 
         List<Player> receivers = new ArrayList<>(Bukkit.getOnlinePlayers());
-        PassengerPacketEvent passengerPacketEvent = new PassengerPacketEvent(targetEntity, allPassengersList, receivers);
+        AsyncPassengerPacketEvent passengerPacketEvent = new AsyncPassengerPacketEvent(async, targetEntity, allPassengersList, receivers);
         WrapperPlayServerSetPassengers packet = new WrapperPlayServerSetPassengers(targetEntity, allPassengersArray);
         Bukkit.getPluginManager().callEvent(passengerPacketEvent);
         passengerPacketEvent.getPacketReceivers().forEach(player -> this.playerManager.sendPacketSilently(player, packet));

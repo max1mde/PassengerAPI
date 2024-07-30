@@ -9,6 +9,6 @@ import org.bukkit.event.vehicle.VehicleExitEvent;
 public record EntityUnMountListener(PassengerAPI passengerAPI) implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onLeave(VehicleExitEvent event) {
-       if(!event.isCancelled() && passengerAPI.getPassengerConfig().isVehicleExitEvent()) passengerAPI.getPassengerManager().removePassenger(event.getVehicle().getEntityId(), event.getExited().getEntityId(), false);
+       if(!event.isCancelled() && passengerAPI.getPassengerConfig().isVehicleExitEvent()) passengerAPI.getPassengerManager().removePassenger(false, event.getVehicle().getEntityId(), event.getExited().getEntityId(), false);
     }
 }
