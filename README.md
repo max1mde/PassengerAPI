@@ -109,28 +109,28 @@ Try using Entity#addPassengers() instead if its a real entity... PassengerAPI wi
 
 ```java
 // Add a single passenger
-passengerActions.addPassenger(targetEntityId, passengerEntityId);
+passengerActions.addPassenger(<async>, targetEntityId, passengerEntityId);
 
 // Add multiple passengers
-passengerActions.addPassengers(targetEntityId, Set.of(passenger1Id, passenger2Id, ...));
+passengerActions.addPassengers(<async>, targetEntityId, Set.of(passenger1Id, passenger2Id, ...));
 
 // Remove a single passenger
-passengerActions.removePassenger(targetEntityId, passengerEntityId);
+passengerActions.removePassenger(<async>, targetEntityId, passengerEntityId);
 
 // Remove multiple passengers
-passengerActions.removePassengers(targetEntityId, Set.of(passenger1Id, passenger2Id, ...));
+passengerActions.removePassengers(<async>, targetEntityId, Set.of(passenger1Id, passenger2Id, ...));
 
 // Remove all passengers for a target entity
-passengerActions.removeAllPassengers(targetEntityId);
+passengerActions.removeAllPassengers(<async>, targetEntityId);
 
 // Get all passengers for a target entity
 Set<Integer> passengers = passengerActions.getPassengers(targetEntityId);
 
 // Remove global passengers (passengers set by all plugins)
-passengerActions.removeGlobalPassengers(targetEntityId, Set.of(passenger1Id, passenger2Id, ...));
+passengerActions.removeGlobalPassengers(<async>, targetEntityId, Set.of(passenger1Id, passenger2Id, ...));
 
 // Remove all global passengers for a target entity (passengers set by all plugins)
-passengerActions.removeAllGlobalPassengers(targetEntityId);
+passengerActions.removeAllGlobalPassengers(<async>, targetEntityId);
 
 // Get all global passengers for a target entity (passengers set by all plugins)
 Set<Integer> globalPassengers = passengerActions.getGlobalPassengers(targetEntityId);
@@ -145,7 +145,7 @@ PassengerAPI also provides events that you can listen to and handle accordingly:
 
 ```java
 @EventHandler
-public void onAddPassenger(AddPassengerEvent event) {
+public void onAddPassenger(AsyncAddPassengerEvent event) {
     // The name of the plugin which tries to add these passengers
     String pluginName = event.getPluginName();
     int targetEntity = event.getTargetEntityID();
@@ -153,7 +153,7 @@ public void onAddPassenger(AddPassengerEvent event) {
 }
 
 @EventHandler
-public void onRemovePassenger(RemovePassengerEvent event) {
+public void onRemovePassenger(AsyncRemovePassengerEvent event) {
     String pluginName = event.getPluginName();
     int targetEntity = event.getTargetEntityID();
     Set<Integer> removedPassengers = event.getPassengerList();
@@ -161,7 +161,7 @@ public void onRemovePassenger(RemovePassengerEvent event) {
 }
 
 @EventHandler
-public void onPassengerPacket(PassengerPacketEvent event) {
+public void onPassengerPacket(AsyncPassengerPacketEvent event) {
     int targetEntity = event.getTargetEntityID();
     Set<Integer> passengers = event.getPassengerList();
     // Which players should receive the packet (You can modify that list)
