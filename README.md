@@ -1,5 +1,8 @@
 <a href="https://discord.gg/2UTkYj26B4" target="_blank"><img src="https://img.shields.io/badge/Discord_Server-7289DA?style=flat&logo=discord&logoColor=white" alt="Join Discord Server" style="border-radius: 15px; height: 20px;"></a>  
 
+[![Card](https://fancy-readme-stats.vercel.app/api/pin-wide/?username=max1mde&repo=PassengerAPI&dark_bg=3&theme=snow&height=150)](https://github.com/max1mde/fancy-readme-stats)
+
+
 # PassengerAPI
 PassengerAPI is a Java API that allows you to manage passengers (entities attached to other entities) for multiple plugins.
 It works as a plugin and provides an easy-to-use interface for adding, removing, and retrieving passengers for any entity,
