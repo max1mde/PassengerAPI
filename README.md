@@ -1,4 +1,6 @@
+<div align="center">
 <a href="https://discord.gg/2UTkYj26B4" target="_blank"><img src="https://img.shields.io/badge/Discord_Server-7289DA?style=flat&logo=discord&logoColor=white" alt="Join Discord Server" style="border-radius: 15px; height: 20px;"></a>  
+</div>
 
 [![Card](https://fancy-readme-stats.vercel.app/api/pin-wide/?username=max1mde&repo=PassengerAPI&dark_bg=3&theme=snow&height=150)](https://github.com/max1mde/fancy-readme-stats)
 
